@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { tambahMateri } from "@/lib/materiActions";
 
-export default function ModalTambahMateri() {
+// Kita terima list kategori unik dari server component (page.tsx)
+export default function ModalTambahMateri({ categories = [] }: { categories?: string[] }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -35,13 +36,24 @@ export default function ModalTambahMateri() {
                 <input name="judul" className="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Contoh: Belajar CRUD Next.js" required />
               </div>
 
+              {/* TAHAP UPDATE: KATEGORI DINAMIS */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-                <select name="kategori" className="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                  <option value="frontend">Frontend Dev</option>
-                  <option value="backend">Backend Integration</option>
-                  <option value="database">Database Prisma</option>
-                </select>
+                <input 
+                  name="kategori" 
+                  list="category-options" 
+                  placeholder="Pilih atau ketik kategori baru..."
+                  className="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+                  required
+                />
+                <datalist id="category-options">
+                  {/* Hapus pilihan manual "frontend", "backend" dst yang tadi lo tulis */}
+                  {/* Biarkan datalist ini hanya berisi kategori unik dari database */}
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat} />
+                  ))}
+                </datalist>
+                <p className="text-[10px] text-gray-400 mt-1 italic">*Ketik untuk membuat kategori baru jika belum ada di daftar.</p>
               </div>
 
               <div>
@@ -55,8 +67,8 @@ export default function ModalTambahMateri() {
               </div>
 
               <div className="flex justify-end gap-3 mt-6">
-                <button type="button" onClick={() => setIsOpen(false)} className="px-5 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Batal</button>
-                <button type="submit" className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-bold">Simpan Materi</button>
+                <button type="button" onClick={() => setIsOpen(false)} className="px-5 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition">Batal</button>
+                <button type="submit" className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-bold shadow-sm transition">Simpan Materi</button>
               </div>
             </form>
           </div>
