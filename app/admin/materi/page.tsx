@@ -68,7 +68,7 @@ export default async function AdminMateriPage({
 
       {/* SEARCH & FILTER BAR */}
       <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-wrap gap-4 items-center">
-        <form className="flex flex-1 gap-2 min-w-[300px]">
+        <form className="flex flex-1 gap-2 min-w-300">
           <input 
             name="q" 
             defaultValue={query}
