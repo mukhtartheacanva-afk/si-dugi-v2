@@ -4,6 +4,7 @@ import ModalEditMateri from "@/components/ModalEditMateri";
 import ModalTambahMateri from "@/components/ModalTambahMateri";
 import FilterKategori from "@/components/FilterKategori";
 import Link from "next/link";
+import LimitControl from "@/components/LimitControl";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +57,7 @@ export default async function AdminMateriPage({
 
   const totalPages = Math.ceil(total / limit);
 
+  
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-8">
@@ -85,9 +87,18 @@ export default async function AdminMateriPage({
             </Link>
           )}
           <FilterKategori categories={allCategories} />
+          
         </form>
+        <div className="flex gap-3 items-center">
+          <button className="bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-emerald-600 transition shadow-sm flex items-center gap-2">
+            <span>📊</span> Export
+          </button>
+          {/* 2. PAKAI KOMPONEN YANG UDAH ADA */}
+          {/* Kirim angka limit yang sekarang aktif ke prop currentLimit */}
+          <LimitControl currentLimit={limit} />
+        </div>
       </div>
-
+      
       {/* TABLE */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
         <table className="w-full text-left border-collapse">

@@ -20,7 +20,7 @@ export default function LimitControl({ currentLimit }: { currentLimit: number })
       <select
         value={currentLimit}
         onChange={(e) => handleLimitChange(e.target.value)}
-        className="border rounded px-2 py-1 outline-none focus:ring-1 focus:ring-blue-300"
+        className="border rounded px-2 py-2 outline-none focus:ring-1 focus:ring-blue-300"
       >
         <option value="5">5</option>
         <option value="10">10</option>

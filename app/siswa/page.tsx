@@ -61,14 +61,16 @@ export default async function SiswaPage(props: {
           <ImportExcel />
           <ExportExcel data={semuaSiswa} />
           <ModalTambah />
+          
         </div>
+        
       </div>
-
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        {/* Tambahkan Kontrol Limit di atas tabel */}
-        <div className="p-4 bg-gray-50/50 border-b-0 flex justify-end">
+      {/* Tambahkan Kontrol Limit di atas tabel */}
+        <div className="p-1 bg-gray-50/50 border-b-0 flex justify-end">
           <LimitControl currentLimit={itemsPerPage} />
         </div>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        
         <table className="w-full text-left border-collapse">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
