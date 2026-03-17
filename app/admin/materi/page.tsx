@@ -5,6 +5,10 @@ import ModalTambahMateri from "@/components/ModalTambahMateri";
 import FilterKategori from "@/components/FilterKategori";
 import Link from "next/link";
 import LimitControl from "@/components/LimitControl";
+import ExportMateriExcel from "@/components/ExportMateriExcel";
+import ImportMateriExcel from "@/components/ImportMateriExcel";
+import PaginationControls from "@/components/PaginationControls";
+import VideoLink from "@/components/VideoLink";
 
 export const dynamic = "force-dynamic";
 
@@ -65,19 +69,21 @@ export default async function AdminMateriPage({
           <h1 className="text-3xl font-extrabold text-gray-900">Manajemen Materi</h1>
           <p className="text-gray-500">Ditemukan <span className="font-bold text-blue-600">{total}</span> materi</p>
         </div>
-        <ModalTambahMateri categories={allCategories} />
+        
       </div>
 
-      {/* SEARCH & FILTER BAR */}
-      <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-wrap gap-4 items-center">
-        <form className="flex flex-1 gap-2 min-w-300">
+      {/* Search Bar & Filter Container */}
+      <div className="bg-gray-40 p-5 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-wrap items-center justify-between gap-4">
+        <form className="flex gap-2 items-center"> {/* Hapus flex-1 di sini agar tidak memenuhi layar */}
           <input 
             name="q" 
             defaultValue={query}
             placeholder="Cari judul..." 
-            className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
+            // Tentukan lebar manual, misal w-64 (16rem) atau w-80 (20rem)
+            className="w-150 px-4 py-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button className="bg-gray-900 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-black transition">
+          
+          <button type="submit" className="bg-gray-900 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-black transition">
             Cari
           </button>
           
@@ -90,14 +96,15 @@ export default async function AdminMateriPage({
           
         </form>
         <div className="flex gap-3 items-center">
-          <button className="bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-emerald-600 transition shadow-sm flex items-center gap-2">
-            <span>📊</span> Export
-          </button>
-          {/* 2. PAKAI KOMPONEN YANG UDAH ADA */}
-          {/* Kirim angka limit yang sekarang aktif ke prop currentLimit */}
+          
+          <ImportMateriExcel />
+          <ExportMateriExcel query={query} category={selectedCategory} />
+          <div className="h-8 w-[1px] bg-gray-200 mx-0 hidden md:block"></div> 
+          <ModalTambahMateri categories={allCategories} />
+          <div className="h-8 w-[1px] bg-gray-200 mx-0 hidden md:block"></div> {/* Garis pembatas tipis */}
           <LimitControl currentLimit={limit} />
+          </div>
         </div>
-      </div>
       
       {/* TABLE */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
@@ -112,9 +119,9 @@ export default async function AdminMateriPage({
           <tbody className="divide-y divide-gray-50">
             {materi.map((item) => (
               <tr key={item.id} className="hover:bg-blue-50/30 transition">
-                <td className="p-5">
-                  <div className="font-bold text-gray-800">{item.judul}</div>
-                  <div className="text-xs text-blue-400 font-mono truncate max-w-xs">{item.urlYoutube}</div>
+                <td className="px-6 py-4">
+                  <div className="text-sm font-bold text-gray-900">{item.judul}</div>
+                  <VideoLink url={item.urlYoutube} /> {/* PAKAI INI */}
                 </td>
                 <td className="p-5">
                   <span className="px-3 py-1 bg-white border border-blue-200 text-blue-600 text-[10px] uppercase font-black rounded-lg shadow-sm">
@@ -134,25 +141,9 @@ export default async function AdminMateriPage({
       </div>
 
       {/* PAGINATION */}
-      {totalPages > 1 && (
-        <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-          <p className="text-sm text-gray-500">Halaman {page} dari {totalPages}</p>
-          <div className="flex gap-2">
-            <Link 
-              href={`/admin/materi?q=${query}&category=${selectedCategory}&page=${page - 1}`}
-              className={`px-4 py-2 rounded-xl text-sm font-bold transition ${page === 1 ? "opacity-30 pointer-events-none" : "bg-white border hover:bg-gray-50"}`}
-            >
-              Prev
-            </Link>
-            <Link 
-              href={`/admin/materi?q=${query}&category=${selectedCategory}&page=${page + 1}`}
-              className={`px-4 py-2 rounded-xl text-sm font-bold transition ${page === totalPages ? "opacity-30 pointer-events-none" : "bg-black text-white hover:bg-gray-800"}`}
-            >
-              Next
-            </Link>
-          </div>
-        </div>
-      )}
+      <PaginationControls 
+        currentPage={page} 
+        totalPages={totalPages}/>
     </div>
   );
 }

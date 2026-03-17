@@ -100,3 +100,48 @@ export async function hapusMateri(id: number) {
     console.error("Gagal hapus materi:", error);
   }
 }
+
+export async function getMateriForExport(query: string, category: string) {
+  // Logic ambil data tanpa pagination (biar semua ke-export)
+  return await prisma.materi.findMany({
+    where: {
+      AND: [
+        category ? { kategori: category } : {},
+        {
+          OR: [
+            { judul: { contains: query } },
+            { kategori: { contains: query } },
+          ],
+        },
+      ],
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function importMateriFromExcel(data: any[]) {
+  try {
+    const result = await prisma.materi.createMany({
+      data: data.map((item) => {
+        // Logika untuk nangkep nama kolom meskipun ada spasi/huruf besar
+        const judul = item.judul || item["Judul Materi"] || item["Judul"] || "Tanpa Judul";
+        const kategori = item.kategori || item["Kategori"] || "umum";
+        const urlYoutube = item.urlYoutube || item["Link YouTube"] || item["URL Video"] || "";
+        const deskripsi = item.deskripsi || item["Deskripsi"] || "";
+
+        return {
+          judul: judul,
+          kategori: kategori.toLowerCase(),
+          urlYoutube: urlYoutube,
+          deskripsi: deskripsi,
+        };
+      }),
+    });
+
+    revalidatePath("/admin/materi");
+    return { success: true, count: result.count };
+  } catch (error) {
+    console.error("Import Error:", error);
+    return { success: false, message: "Gagal import data." };
+  }
+}

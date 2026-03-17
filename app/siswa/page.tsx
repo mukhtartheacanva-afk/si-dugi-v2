@@ -50,27 +50,46 @@ export default async function SiswaPage(props: {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-        <h1 className="text-2xl font-bold text-gray-800">Manajemen Data Siswa</h1>
-        
-        {/* Pembungkus tombol dibuat flex agar tidak turun-turun */}
-        <div className="flex items-center gap-2 w-full lg:w-auto overflow-x-auto pb-2 lg:pb-0">
-          <div className="flex-1 lg:flex-none">
-            <SearchBar />
-          </div>
-          <ImportExcel />
-          <ExportExcel data={semuaSiswa} />
-          <ModalTambah />
-          
+      {/* Header Halaman */}
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Manajemen Data Siswa</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Total database: <span className="font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">{totalSiswa}</span> Siswa
+          </p>
         </div>
-        
       </div>
-      {/* Tambahkan Kontrol Limit di atas tabel */}
-        <div className="p-1 bg-gray-50/50 border-b-0 flex justify-end">
-          <LimitControl currentLimit={itemsPerPage} />
-        </div>
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+
+      {/* Filter Bar - Container Utama */}
+      <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-wrap items-center justify-between gap-4">
         
+        {/* SISI KIRI: Search Bar */}
+        <div className="flex-1 min-w-[300px] md:max-w-xs">
+          <SearchBar />
+        </div>
+
+        {/* SISI KANAN: Group Tombol Aksi */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Kelompok Data (Import/Export) */}
+          
+            <ImportExcel />
+            <ExportExcel data={semuaSiswa} />
+          {/* Pembatas Vertikal */}
+          <div className="h-8 w-[1px] bg-gray-200 mx-1 hidden lg:block"></div>
+
+          {/* Tombol Utama */}
+          <ModalTambah />
+
+          {/* Pembatas Vertikal */}
+          <div className="h-8 w-[1px] bg-gray-200 mx-1 hidden lg:block"></div>
+
+          {/* Kontrol Tampilan */}
+          <div className="flex items-center gap-2">
+            <LimitControl currentLimit={itemsPerPage} />
+          </div>
+        </div>
+      </div>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
@@ -113,17 +132,11 @@ export default async function SiswaPage(props: {
             )}
           </tbody>
         </table>
-
-        {/* Footer Pagging */}
-        <div className="flex justify-between items-center bg-gray-50 p-4 border-t">
-          <p className="text-sm text-gray-600">
-            Menampilkan {dataSiswa.length} dari {totalSiswa} siswa
-          </p>
-          <div className="flex gap-2">
-            <PaginationControls currentPage={currentPage} totalPages={totalPages} />
-          </div>
-        </div>
       </div>
+      {/* PAGINATION */}
+            <PaginationControls 
+              currentPage={currentPage} 
+              totalPages={totalPages}/>
     </div>
   );
 }
