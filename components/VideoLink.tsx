@@ -10,7 +10,7 @@ export default function VideoLink({ url }: { url: string }) {
     <>
       <button 
         onClick={() => setOpen(true)}
-        className="text-blue-500 hover:text-blue-700 text-xs font-medium underline truncate max-w-[200px] block"
+        className="text-blue-500 hover:text-blue-700 text-xs font-medium underline truncate max-w-50 block"
       >
         {url}
       </button>

@@ -21,7 +21,7 @@ export default function ModalVideo({ url, isOpen, onClose }: ModalVideoProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[99] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-99 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="relative w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl">
         {/* Tombol Close */}
         <button 

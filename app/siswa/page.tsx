@@ -64,7 +64,7 @@ export default async function SiswaPage(props: {
       <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-wrap items-center justify-between gap-4">
         
         {/* SISI KIRI: Search Bar */}
-        <div className="flex-1 min-w-[300px] md:max-w-xs">
+        <div className="flex-1 min-w-75 md:max-w-xs">
           <SearchBar />
         </div>
 
@@ -75,13 +75,13 @@ export default async function SiswaPage(props: {
             <ImportExcel />
             <ExportExcel data={semuaSiswa} />
           {/* Pembatas Vertikal */}
-          <div className="h-8 w-[1px] bg-gray-200 mx-1 hidden lg:block"></div>
+          <div className="h-8 w-px bg-gray-200 mx-1 hidden lg:block"></div>
 
           {/* Tombol Utama */}
           <ModalTambah />
 
           {/* Pembatas Vertikal */}
-          <div className="h-8 w-[1px] bg-gray-200 mx-1 hidden lg:block"></div>
+          <div className="h-8 w-px bg-gray-200 mx-1 hidden lg:block"></div>
 
           {/* Kontrol Tampilan */}
           <div className="flex items-center gap-2">
