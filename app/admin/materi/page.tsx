@@ -99,9 +99,9 @@ export default async function AdminMateriPage({
           
           <ImportMateriExcel />
           <ExportMateriExcel query={query} category={selectedCategory} />
-          <div className="h-8 w-[1px] bg-gray-200 mx-0 hidden md:block"></div> 
+          <div className="h-8 w-px bg-gray-200 mx-0 hidden md:block"></div> 
           <ModalTambahMateri categories={allCategories} />
-          <div className="h-8 w-[1px] bg-gray-200 mx-0 hidden md:block"></div> {/* Garis pembatas tipis */}
+          <div className="h-8 w-px bg-gray-200 mx-0 hidden md:block"></div> {/* Garis pembatas tipis */}
           <LimitControl currentLimit={limit} />
           </div>
         </div>
