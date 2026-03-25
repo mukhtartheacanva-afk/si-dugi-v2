@@ -162,7 +162,7 @@ export default function MateriPage() {
               <button
                 key={i + 1}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`min-w-[40px] h-10 rounded-lg border transition ${
+                className={`min-w-10 h-10 rounded-lg border transition ${
                   currentPage === i + 1 ? "bg-blue-600 text-white" : "bg-white hover:bg-gray-50"
                 }`}
               >
