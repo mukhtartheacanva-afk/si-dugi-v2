@@ -1,27 +1,70 @@
-/* @tailwindcss/upgrade-ignore */
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Mode Normal (Default) */
+  --color-bg-main: #f8fafc;
+  --color-text-main: #1e293b;
+  --color-card-bg: #ffffff;
+  --color-border: #e2e8f0;
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+
+  /* Sidebar Normal */
+  --color-sidebar-bg: #0f172a;
+  --color-sidebar-text: #94a3b8;
+  --color-sidebar-active: #2563eb;
+  --bg-texture: none;
+}
+
+[data-theme="nature"] {
+  /* Mode Alam (Wood/Forest) */
+  --color-bg-main: #f4efe1;
+  --color-text-main: #3e2723;
+  --color-card-bg: #fffbf0;
+  --color-border: color-mix(in srgb, var(--color-text-main) 12%, transparent);
+  --color-accent: #2e7d32; /* Hijau Hutan */
+  --color-accent-hover: #1b5e20;
+
+  /* Sidebar Alam (Cokelat Kayu Gelap) */
+  --color-sidebar-bg: #2d1b10;
+  --color-sidebar-text: #d7ccc8;
+  --color-sidebar-active: #2e7d32;
+  /* Tekstur Kayu */
+  --bg-texture: url("https://www.transparenttextures.com/patterns/wood-pattern.png");
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-theme-accent: var(--color-accent);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    background-color: var(--color-bg-main);
+    color: var(--color-text-main);
+    background-image: var(--bg-texture);
+    /* Transisi warna agar smooth saat pindah mode */
+    @apply transition-[background-color,color] duration-300;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* FIX UTILITY: Biar card dan tombol otomatis ikut theme */
+.bg-white {
+  background-color: var(--color-card-bg) !important;
+}
+.text-gray-900,
+.text-gray-800,
+.text-gray-700 {
+  color: var(--color-text-main) !important;
+}
+.border-gray-100,
+.border-gray-200 {
+  border-color: var(--color-border) !important;
+}
+
+/* Paksa semua tombol biru (bg-blue-600) jadi warna aksen dinamis */
+.bg-blue-600 {
+  background-color: var(--color-accent) !important;
+}
+.bg-blue-600:hover {
+  background-color: var(--color-accent-hover) !important;
 }

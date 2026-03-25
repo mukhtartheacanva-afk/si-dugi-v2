@@ -63,6 +63,7 @@ export default async function AdminMateriPage({
 
   
   return (
+    
     <div className="p-8">
       <div className="flex justify-between items-center mb-8">
         <div>
@@ -71,7 +72,7 @@ export default async function AdminMateriPage({
         </div>
         
       </div>
-
+      
       {/* Search Bar & Filter Container */}
       <div className="bg-gray-40 p-5 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-wrap items-center justify-between gap-4">
         <form className="flex gap-2 items-center"> {/* Hapus flex-1 di sini agar tidak memenuhi layar */}

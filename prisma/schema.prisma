@@ -38,3 +38,18 @@ model Materi {
   deskripsi   String?
   createdAt   DateTime @default(now())
 }
+
+// Model untuk Kumpulan Peraturan
+model Regulation {
+  id          String   @id @default(cuid())
+  title       String   // Judul Peraturan
+  description String?  // Hapus @db.Text, SQLite otomatis handle teks panjang
+  category    String   // Contoh: "Undang-Undang", "Peraturan Daerah"
+  fileUrl     String   // Lokasi simpan file PDF
+  fileName    String   // Nama asli file untuk download
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([title])
+}
