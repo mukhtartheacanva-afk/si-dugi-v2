@@ -160,7 +160,7 @@ function InputGroup({ label, name, placeholder, defaultValue }: any) {
 // Komponen Reusable Upload (Tetap Aman)
 function UploadBox({ label, name, isExist }: any) {
   return (
-    <div className={`border-2 border-dashed rounded-[2rem] p-6 text-center transition hover:border-[#8D6E63] ${isExist ? 'bg-green-50 border-green-200' : 'bg-stone-50 border-stone-200'}`}>
+    <div className={`border-2 border-dashed rounded-4xl p-6 text-center transition hover:border-[#8D6E63] ${isExist ? 'bg-green-50 border-green-200' : 'bg-stone-50 border-stone-200'}`}>
       <label className="cursor-pointer block">
         <span className="text-2xl block mb-2">{isExist ? '✅' : '📂'}</span>
         <span className="text-[10px] font-black text-stone-500 uppercase tracking-widest block">{label}</span>
