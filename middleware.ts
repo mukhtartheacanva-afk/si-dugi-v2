@@ -17,5 +17,5 @@ export default auth((req) => {
 
 // Daftarkan halaman mana saja yang mau dijaga "Satpam" ini
 export const config = {
-  matcher: ["/siswa/:path*", "/login", "/register"], // Tambahkan /register di sini
+  matcher: ["/siswa/:path*", "/admin/:path*", "/peraturan/:path*", "/login", "/register"], // Tambahkan /register di sini
 };

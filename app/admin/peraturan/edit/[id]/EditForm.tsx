@@ -31,7 +31,7 @@ export default function EditForm({ initialData }: { initialData: any }) {
 
   return (
     <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-      <form action={handleSubmit} className="space-y-5">
+      <form action={handleSubmit} className="space-y-5" encType="multipart/form-data">
         
         {/* Input Judul */}
         <div className="space-y-2">
@@ -79,22 +79,25 @@ export default function EditForm({ initialData }: { initialData: any }) {
 
         <hr className="border-gray-100 my-4" />
 
-        {/* OPSI 1: LINK GOOGLE DRIVE (Sekarang Muncul) */}
-        <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 space-y-2">
-          <label className="block text-xs font-bold text-blue-600 uppercase tracking-wider">
-            Opsi A: Link Google Drive
-          </label>
-          <input 
-            name="driveLink" 
-            type="url" 
-            defaultValue={isDrive ? initialData.fileUrl : ""}
-            className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400 bg-white" 
-            placeholder="Paste link drive baru jika ingin ganti..." 
-          />
-          <p className="text-[10px] text-gray-500 italic">
-            {isDrive ? "*Data saat ini menggunakan Google Drive." : "*Kosongkan jika ingin tetap menggunakan file upload."}
-          </p>
-        </div>
+        {/* OPSI 1: LINK GOOGLE DRIVE */}
+          <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 space-y-2">
+            <label className="block text-xs font-bold text-blue-600 uppercase tracking-wider">
+              Opsi A: Link Google Drive
+            </label>
+            <input 
+              name="driveLink" 
+              type="url" 
+              // Pakai defaultValue agar input bisa diedit
+              defaultValue={isDrive ? initialData.fileUrl : ""}
+              className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400 bg-white" 
+              placeholder="https://drive.google.com/..." 
+            />
+            <p className="text-[10px] text-gray-500 italic">
+              {isDrive 
+                ? "✅ Saat ini menggunakan Drive. Ubah link di atas atau upload file di bawah untuk ganti." 
+                : "ℹ️ Saat ini menggunakan File Lokal. Isi link di atas jika ingin ganti ke Google Drive."}
+            </p>
+          </div>
 
         <div className="text-center text-xs font-bold opacity-30 my-2">— ATAU —</div>
 

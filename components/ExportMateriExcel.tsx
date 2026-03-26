@@ -68,7 +68,7 @@ export default function ExportMateriExcel({ query, category }: ExportProps) {
       } text-white px-5 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-2`}
     >
       <span>{loading ? "⏳" : "📊"}</span>
-      {loading ? "Processing..." : "Export Excel"}
+      {loading ? "Processing..." : "Export"}
     </button>
   );
 }

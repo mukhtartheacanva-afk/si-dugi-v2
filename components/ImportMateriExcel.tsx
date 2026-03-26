@@ -63,7 +63,7 @@ export default function ImportMateriExcel() {
         disabled={isImporting}
         className="bg-blue-100 text-blue-700 px-5 py-2.5 rounded-xl font-bold hover:bg-blue-200 transition shadow-sm flex items-center gap-2"
       >
-        <span>📥</span> {isImporting ? "Importing..." : "Import Excel"}
+        <span>📥</span> {isImporting ? "Importing..." : "Import"}
       </button>
     </>
   );

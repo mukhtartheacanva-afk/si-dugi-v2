@@ -13,7 +13,7 @@ export default function ModalTambahMateri({ categories = [] }: { categories?: st
         onClick={() => setIsOpen(true)}
         className="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition shadow-md flex items-center gap-2"
       >
-        <span>+</span> Tambah Materi Baru
+        <span>+</span> Tambah Materi
       </button>
 
       {isOpen && (

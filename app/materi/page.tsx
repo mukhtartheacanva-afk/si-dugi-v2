@@ -55,7 +55,7 @@ export default function MateriPage() {
   return (
     <div className="p-8">
       {/* HEADER */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-2">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Materi Pembelajaran</h1>
           <p className="text-gray-500">Total: {materiDifilter.length} materi ditemukan.</p>

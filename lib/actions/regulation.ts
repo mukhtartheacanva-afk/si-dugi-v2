@@ -99,25 +99,16 @@ export async function updateRegulation(id: string, formData: FormData) {
     const driveLink = formData.get("driveLink") as string;
     const file = formData.get("file") as File;
 
-    // 1. Cari data lama di database
+    console.log("DEBUG: driveLink yang masuk ->", driveLink); // Cek di terminal VS Code lo
+
     const existing = await prisma.regulation.findUnique({ where: { id } });
     if (!existing) return { success: false, message: "Data tidak ditemukan" };
 
     let newFileUrl = existing.fileUrl;
     let newFileName = existing.fileName;
 
-    // 2. LOGIKA UPDATE: Cek apakah user input Link Drive atau Upload File Baru
-    if (driveLink) {
-      // Jika pakai Link Drive baru, hapus file lokal lama jika ada
-      if (existing.fileUrl.startsWith("/uploads")) {
-        try { await unlink(path.join(process.cwd(), "public", existing.fileUrl)); } catch (e) {}
-      }
-      const fileId = driveLink.match(/\/d\/(.+?)\//)?.[1] || driveLink;
-      newFileUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-      newFileName = "Google Drive Link";
-    } 
-    else if (file && file.size > 0) {
-      // Jika upload file fisik baru, hapus file lama
+    // LOGIKA 1: Jika ada upload file fisik (Prioritas Utama)
+    if (file && file.size > 0) {
       if (existing.fileUrl.startsWith("/uploads")) {
         try { await unlink(path.join(process.cwd(), "public", existing.fileUrl)); } catch (e) {}
       }
@@ -127,11 +118,30 @@ export async function updateRegulation(id: string, formData: FormData) {
       const uploadDir = path.join(process.cwd(), "public/uploads/peraturan");
       await mkdir(uploadDir, { recursive: true });
       await writeFile(path.join(uploadDir, uniqueName), buffer);
+      
       newFileUrl = `/uploads/peraturan/${uniqueName}`;
       newFileName = file.name;
+    } 
+    // LOGIKA 2: Jika ada input Drive Link (dan tidak upload file)
+    else if (driveLink && driveLink.trim() !== "") {
+      // Ekstrak ID Drive dengan cara yang lebih aman (mendukung berbagai format link)
+      const driveMatch = driveLink.match(/[-\w]{25,}/); // Cari string acak panjang khas ID Google
+      const fileId = driveMatch ? driveMatch[0] : null;
+
+      if (fileId) {
+        // Hapus file lokal lama jika pindah ke Drive
+        if (existing.fileUrl.startsWith("/uploads")) {
+          try { await unlink(path.join(process.cwd(), "public", existing.fileUrl)); } catch (e) {}
+        }
+        newFileUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+        newFileName = "Google Drive Link";
+        console.log("DEBUG: ID Berhasil diekstrak ->", fileId);
+      } else {
+        console.log("DEBUG: Gagal ekstrak ID dari link ->", driveLink);
+      }
     }
 
-    // 3. Simpan perubahan ke Database
+    // UPDATE DATABASE
     await prisma.regulation.update({
       where: { id },
       data: { 
@@ -144,9 +154,10 @@ export async function updateRegulation(id: string, formData: FormData) {
     });
 
     revalidatePath("/admin/peraturan");
+    revalidatePath("/peraturan");
     return { success: true };
   } catch (error) {
-    console.error(error);
+    console.error("ERROR UPDATE:", error);
     return { success: false, message: "Gagal mengupdate data" };
   }
 }

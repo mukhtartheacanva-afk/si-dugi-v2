@@ -1,35 +1,53 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
+// prisma/schema.prisma
 
 generator client {
   provider = "prisma-client-js"
-  }
+}
 
 datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
 }
 
-// Ini adalah "cetak biru" tabel lo
-model Siswa {
-  id        Int      @id @default(autoincrement())
-  nama      String
-  kelas     String
-  status    String   @default("Aktif")
-  createdAt DateTime @default(now())
-}
-
+// TABEL USER (Sekarang include Data Siswa)
 model User {
   id        Int      @id @default(autoincrement())
   nama      String
   email     String   @unique
   password  String
-  role      String   @default("USER") // Nanti isinya "ADMIN" atau "USER"
+  role      String   @default("USER")
+  kelas     String?  // <--- Pastikan baris ini ADA
+  status    String   @default("Aktif")
+  
+  // Relasi ke Profile
+  profile   Profile? 
   createdAt DateTime @default(now())
 }
 
+model Profile {
+  id                Int      @id @default(autoincrement())
+  nik               String?  @unique
+  alamatKtp         String?
+  noHp              String?
+  pekerjaan         String?
+  namaPerusahaan    String?
+  alamatPerusahaan  String?
+  kualifikasi       String?
+  noRegGanis        String?
+  skPenugasan       String?
+
+  // Field untuk simpan Path File/PDF/Foto
+  fileKtp           String?
+  fileKartuGanis    String?
+  fileSkPenugasan   String?
+  fotoProfil        String?
+
+  // Foreign Key ke User
+  userId            Int      @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// TABEL MATERI (E-Learning)
 model Materi {
   id          Int      @id @default(autoincrement())
   judul       String
@@ -39,13 +57,13 @@ model Materi {
   createdAt   DateTime @default(now())
 }
 
-// Model untuk Kumpulan Peraturan
+// TABEL REGULATION (Kumpulan Peraturan)
 model Regulation {
   id          String   @id @default(cuid())
   title       String   // Judul Peraturan
-  description String?  // Hapus @db.Text, SQLite otomatis handle teks panjang
+  description String?  
   category    String   // Contoh: "Undang-Undang", "Peraturan Daerah"
-  fileUrl     String   // Lokasi simpan file PDF
+  fileUrl     String   // Lokasi simpan file (Drive/Upload)
   fileName    String   // Nama asli file untuk download
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
