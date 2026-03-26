@@ -5,7 +5,14 @@ import { useRouter } from "next/navigation";
 import { updateProfilMandiri } from "@/app/profil/actions";
 import Link from "next/link";
 
-export default function FormEditProfil({ initialData }: { initialData: any }) {
+// Tambahkan targetUserId di destructured props
+export default function FormEditProfil({ 
+  initialData, 
+  targetUserId 
+}: { 
+  initialData: any; 
+  targetUserId: string; 
+}) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const router = useRouter();
@@ -20,7 +27,12 @@ export default function FormEditProfil({ initialData }: { initialData: any }) {
 
     if (res.success) {
       alert("Profil Berhasil Diperbarui!");
-      router.push("/profil");
+      // Jika yang edit adalah Admin, balikkan ke halaman data siswa
+      if (initialData.role === "USER") {
+        router.push("/siswa"); // Sesuaikan route data siswa lo
+      } else {
+        router.push("/profil");
+      }
       router.refresh();
     } else {
       setMessage(res.message || "Gagal memperbarui profil. Coba lagi.");
@@ -30,18 +42,23 @@ export default function FormEditProfil({ initialData }: { initialData: any }) {
   }
 
   return (
-    /* mx-auto memastikan form tetap di tengah area konten yang tersedia */
-    <div className="w-full max-w-7xl mx-auto space-y-6">
+    /* max-w-5xl supaya form tetap proporsional dan tidak kepanjangan di layar lebar */
+    <div className="w-full max-w-5xl mx-auto space-y-6">
       <div className="mb-6">
         <Link href="/profil" className="text-[#8D6E63] font-bold flex items-center gap-2 hover:underline">
-          ← Kembali ke Profil
+          ← Kembali
         </Link>
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-[2.5rem] shadow-sm border border-stone-100 overflow-hidden">
+        {/* INPUT HIDDEN: Sangat penting agar Action tahu ID target */}
+        <input type="hidden" name="userId" value={targetUserId} />
+
         <div className="bg-[#5D4037] p-8 text-white">
           <h1 className="text-2xl font-black">Lengkapi Data Personal</h1>
-          <p className="text-stone-300 text-sm italic">Pastikan data sesuai dengan dokumen asli</p>
+          <p className="text-stone-300 text-sm italic">
+            {initialData.role === "USER" ? `Mengedit Profil: ${initialData.nama}` : "Pastikan data sesuai dengan dokumen asli"}
+          </p>
         </div>
 
         <div className="p-8 space-y-10">
@@ -84,8 +101,10 @@ export default function FormEditProfil({ initialData }: { initialData: any }) {
             <div className="md:col-span-2">
               <h3 className="text-[#8D6E63] font-black uppercase text-xs tracking-widest border-b pb-2">II. Detail Pekerjaan & Registrasi</h3>
             </div>
-            <InputGroup label="Pekerjaan" name="pekerjaan" defaultValue={initialData?.profile?.pekerjaan} placeholder="Tenaga Teknis" />
-            <InputGroup label="Nama Perusahaan" name="namaPerusahaan" defaultValue={initialData?.profile?.namaPerusahaan} placeholder="PT..." />
+            <InputGroup label="Pekerjaan" name="pekerjaan" defaultValue={initialData?.profile?.pekerjaan} placeholder="GANIS/TUK/..." />
+            <InputGroup label="Nama Perusahaan" name="namaPerusahaan" defaultValue={initialData?.profile?.namaPerusahaan} placeholder="PT/CV/UD..." />
+            <InputGroup label="Alamat Perusahaan" name="alamatPerusahaan" defaultValue={initialData?.profile?.alamatPerusahaan} placeholder="Alamat Perusahaan" />
+            <InputGroup label="Kualifikasi" name="kualifikasi" defaultValue={initialData?.profile?.kualifikasi} placeholder="GANISPH-PKB/PKG/PKL..." />
             <InputGroup label="No. Reg Ganis" name="noRegGanis" defaultValue={initialData?.profile?.noRegGanis} placeholder="REG-xxxx" />
             <InputGroup label="No. SK Penugasan" name="skPenugasan" defaultValue={initialData?.profile?.skPenugasan} placeholder="SK-xxxx" />
           </div>
@@ -101,7 +120,13 @@ export default function FormEditProfil({ initialData }: { initialData: any }) {
           </div>
 
           <div className="pt-6 border-t border-stone-100 flex justify-end gap-4">
-            <Link href="/profil" className="px-8 py-4 text-stone-400 font-bold hover:text-stone-600">Batal</Link>
+            <button 
+              type="button"
+              onClick={() => router.back()} 
+              className="px-8 py-4 text-stone-400 font-bold hover:text-stone-600"
+            >
+              Batal
+            </button>
             <button
               type="submit"
               disabled={loading}
@@ -116,7 +141,7 @@ export default function FormEditProfil({ initialData }: { initialData: any }) {
   );
 }
 
-// Komponen Reusable Input
+// Komponen Reusable Input (Tetap Aman)
 function InputGroup({ label, name, placeholder, defaultValue }: any) {
   return (
     <div>
@@ -132,7 +157,7 @@ function InputGroup({ label, name, placeholder, defaultValue }: any) {
   );
 }
 
-// Komponen Reusable Upload
+// Komponen Reusable Upload (Tetap Aman)
 function UploadBox({ label, name, isExist }: any) {
   return (
     <div className={`border-2 border-dashed rounded-[2rem] p-6 text-center transition hover:border-[#8D6E63] ${isExist ? 'bg-green-50 border-green-200' : 'bg-stone-50 border-stone-200'}`}>

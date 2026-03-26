@@ -83,6 +83,7 @@ export default async function ProfilPage() {
                   <h3 className="text-[#8D6E63] font-black uppercase text-xs tracking-[0.2em] border-b pb-2">Detail Ganis</h3>
                   <DataField label="Pekerjaan" value={user?.profile?.pekerjaan} />
                   <DataField label="Nama Perusahaan" value={user?.profile?.namaPerusahaan} />
+                  <DataField label="Alamat Perusahaan" value={user?.profile?.alamatPerusahaan} />
                   <DataField label="Kualifikasi" value={user?.profile?.kualifikasi} />
                   <DataField label="No. Reg Ganis" value={user?.profile?.noRegGanis} />
                   <DataField label="SK Penugasan" value={user?.profile?.skPenugasan} />

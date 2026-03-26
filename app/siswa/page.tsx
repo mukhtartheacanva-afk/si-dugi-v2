@@ -7,13 +7,14 @@ import PaginationControls from "@/components/PaginationControls";
 import ExportExcel from "@/components/ExportExcel";
 import ImportExcel from "@/components/ImportExcel";
 import LimitControl from "@/components/LimitControl";
+import Link from "next/link"; // Tambahkan Link untuk navigasi ke profil
 
 // UPDATE: Interface menyesuaikan model User
 interface Siswa {
-  id: number;
+  id: string; // Sesuaikan dengan tipe ID di database lo (biasanya string kalau pakai Prisma ID)
   nama: string;
-  email: string; // Tambahan field email
-  kelas: string | null; // Kelas sekarang nullable di schema
+  email: string;
+  kelas: string | null;
   status: string;
   role: string;
   createdAt: Date;
@@ -27,10 +28,9 @@ export default async function SiswaPage(props: {
   const currentPage = Number(searchParams.page) || 1;
   const itemsPerPage = Number(searchParams.limit) || 5;
 
-  // --- UPDATE: Query ke tabel USER dengan filter role "USER" ---
   const semuaSiswa = await prisma.user.findMany({
     where: {
-      role: "USER", // Kunci utama: hanya ambil data siswa
+      role: "USER",
       OR: [
         { nama: { contains: query } },
         { email: { contains: query } },
@@ -50,7 +50,6 @@ export default async function SiswaPage(props: {
 
   return (
     <div className="space-y-6">
-      {/* Header Halaman */}
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Manajemen Data Siswa</h1>
@@ -60,7 +59,6 @@ export default async function SiswaPage(props: {
         </div>
       </div>
 
-      {/* Filter Bar */}
       <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-wrap items-center justify-between gap-4">
         <div className="flex-1 min-w-75 md:max-w-xs">
           <SearchBar />
@@ -69,20 +67,15 @@ export default async function SiswaPage(props: {
         <div className="flex flex-wrap items-center gap-3">
           <ImportExcel />
           <ExportExcel data={semuaSiswa} />
-          
           <div className="h-8 w-px bg-gray-200 mx-1 hidden lg:block"></div>
-
           <ModalTambah />
-
           <div className="h-8 w-px bg-gray-200 mx-1 hidden lg:block"></div>
-
           <div className="flex items-center gap-2">
             <LimitControl currentLimit={itemsPerPage} />
           </div>
         </div>
       </div>
 
-      {/* Table Section */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead className="bg-gray-50 border-b border-gray-200">
@@ -92,14 +85,14 @@ export default async function SiswaPage(props: {
               <th className="p-4 font-semibold text-gray-600">Email / Akun</th>
               <th className="p-4 font-semibold text-gray-600">Kelas</th>
               <th className="p-4 font-semibold text-gray-600">Status</th>
-              <th className="p-4 font-semibold text-gray-600">Aksi</th>
+              <th className="p-4 font-semibold text-gray-600 text-center">Aksi</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {dataSiswa.length === 0 ? (
               <tr>
                 <td colSpan={6} className="p-8 text-center text-gray-400 italic">
-                  Belum ada data siswa. Klik tambah data atau biarkan siswa daftar mandiri!
+                  Belum ada data siswa.
                 </td>
               </tr>
             ) : (
@@ -118,8 +111,18 @@ export default async function SiswaPage(props: {
                       {siswa.status}
                     </span>
                   </td>
-                  <td className="p-4 flex gap-4">
-                    {/* Kirim data user ke modal edit */}
+                  <td className="p-4 flex items-center justify-center gap-3">
+                    {/* TOMBOL PROFIL: Akses halaman edit profil siswa berdasarkan ID */}
+                    <Link 
+                      href={`/profil/${siswa.id}`} // Arahkan ke folder detail
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-[#8D6E63] text-white text-xs font-bold rounded-lg hover:bg-[#5D4037] transition shadow-sm"
+                      title="Lihat/Edit Profil Lengkap"
+                    >
+                      <span>Profil</span>
+                    </Link>
+
+                    <div className="h-4 w-px bg-gray-200"></div>
+
                     <ModalEdit siswa={siswa} /> 
                     <TombolHapus id={siswa.id} />
                   </td>
@@ -130,7 +133,6 @@ export default async function SiswaPage(props: {
         </table>
       </div>
 
-      {/* PAGINATION */}
       <PaginationControls 
         currentPage={currentPage} 
         totalPages={totalPages}
