@@ -154,7 +154,7 @@ export async function importSiswa(data: any[]) {
 
     await prisma.user.createMany({
       data: formattedData,
-      skipDuplicates: true,
+      // skipDuplicates: true,
     });
 
     revalidatePath("/siswa");
