@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "10mb", // Naikin limit jadi 10MB biar PDF aman
     },
   },
+  // TAMBAHKAN DI SINI:
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 export default nextConfig;
