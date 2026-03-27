@@ -1,3 +1,4 @@
+<meta name="referrer" content="no-referrer-when-downgrade" />
 import { signOut } from "@/auth";
 import ThemeBtn from "./ThemeBtn"; // Import tombol baru
 
