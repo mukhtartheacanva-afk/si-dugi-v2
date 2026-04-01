@@ -10,7 +10,7 @@ export default function MateriPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [kategoriTerpilih, setKategoriTerpilih] = useState("semua");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Default ke 10 biar lebih rapi
 
   // 1. Fetch Data dari API
   useEffect(() => {
@@ -28,82 +28,89 @@ export default function MateriPage() {
     fetchMateri();
   }, []);
 
-  const daftarKategori = [
-    { id: "semua", nama: "Semua Materi" },
-    { id: "frontend", nama: "Frontend Dev" },
-    { id: "backend", nama: "Backend Integration" },
-    { id: "database", nama: "Database Prisma" },
-  ];
+  // 2. LOGIC DINAMIS: Ambil kategori unik dari dataMateri yang di-fetch
+  const daftarKategoriDinamis = useMemo(() => {
+    // Ambil semua string kategori, bersihkan spasi, lalu hilangkan duplikat pakai Set
+    const kategoriUnik = Array.from(new Set(dataMateri.map((m) => m.kategori)));
+    // Urutkan abjad agar rapi
+    return kategoriUnik.sort();
+  }, [dataMateri]);
 
-  // 2. Logic Filtering (DITAMBAHKAN dataMateri di dependency)
+  // 3. Logic Filtering
   const materiDifilter = useMemo(() => {
     return dataMateri.filter((m) => {
       const matchSearch = m.judul.toLowerCase().includes(searchTerm.toLowerCase());
       const matchKategori = kategoriTerpilih === "semua" || m.kategori === kategoriTerpilih;
       return matchSearch && matchKategori;
     });
-  }, [searchTerm, kategoriTerpilih, dataMateri]); // <--- Penting!
+  }, [searchTerm, kategoriTerpilih, dataMateri]);
 
-  // 3. Logic Pagination
+  // 4. Logic Pagination
   const totalPages = Math.ceil(materiDifilter.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = materiDifilter.slice(indexOfFirstItem, indexOfLastItem);
 
-  if (loading) return <div className="p-8 text-center text-gray-500">Menghubungkan ke database...</div>;
+  if (loading) return <div className="p-20 text-center text-gray-500 font-medium">Menghubungkan ke database...</div>;
 
   return (
-    <div className="p-8">
+    <div className="p-8 max-w-10xl mx-auto">
       {/* HEADER */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-2">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">Materi Pembelajaran</h1>
-          <p className="text-gray-500">Total: {materiDifilter.length} materi ditemukan.</p>
+          <h1 className="text-3xl font-extrabold text-gray-900">Materi Pembelajaran</h1>
+          <p className="text-gray-500 mt-1">Menampilkan <span className="text-blue-600 font-bold">{materiDifilter.length}</span> materi terbaik.</p>
         </div>
 
         <Link 
           href="https://www.youtube.com/@mukhtarmuslim9461" 
           target="_blank"
-          className="bg-red-600 text-white px-6 py-3 rounded-full font-bold hover:bg-red-700 transition shadow-lg flex items-center gap-2"
+          className="bg-red-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-red-700 transition shadow-md flex items-center gap-2 group"
         >
-          ▶ Subscribe YouTube
+          <span className="group-hover:scale-110 transition-transform">▶</span> Subscribe YouTube
         </Link>
       </header>
 
       {/* FILTER, SEARCH, & LIMIT SECTION */}
       <div className="mb-8 grid grid-cols-1 md:grid-cols-12 gap-4">
+        {/* Search */}
         <div className="md:col-span-6 relative">
-          <span className="absolute inset-y-0 left-3 flex items-center text-gray-400">🔍</span>
           <input 
             type="text"
             placeholder="Cari judul materi..."
-            className="w-full pl-10 pr-4 py-3 border rounded-xl bg-white shadow-sm outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-12 pr-4 py-3.5 border rounded-2xl bg-white shadow-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
               setCurrentPage(1);
             }}
           />
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl">🔍</span>
         </div>
 
+        {/* Dropdown Kategori (SEKARANG DINAMIS) */}
         <div className="md:col-span-3">
           <select 
-            className="w-full p-3 border rounded-xl bg-white shadow-sm outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3.5 border rounded-2xl bg-white shadow-sm outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer appearance-none"
             value={kategoriTerpilih}
             onChange={(e) => {
               setKategoriTerpilih(e.target.value);
               setCurrentPage(1);
             }}
           >
-            {daftarKategori.map(kat => (
-              <option key={kat.id} value={kat.id}>{kat.nama}</option>
+            <option value="semua">📂 Semua Kategori</option>
+            {daftarKategoriDinamis.map((kat) => (
+              <option key={kat} value={kat}>
+                📍 {kat.toUpperCase()}
+              </option>
             ))}
           </select>
         </div>
 
+        {/* Limit Control */}
         <div className="md:col-span-3">
           <select 
-            className="w-full p-3 border rounded-xl bg-white shadow-sm outline-none focus:ring-2 focus:ring-blue-500 font-medium text-blue-600"
+            className="w-full p-3.5 border rounded-2xl bg-white shadow-sm outline-none focus:ring-2 focus:ring-blue-500 font-bold text-blue-600 cursor-pointer appearance-none"
             value={itemsPerPage}
             onChange={(e) => {
               setItemsPerPage(Number(e.target.value));
@@ -112,8 +119,8 @@ export default function MateriPage() {
           >
             <option value={5}>Tampilkan: 5</option>
             <option value={10}>Tampilkan: 10</option>
+            <option value={20}>Tampilkan: 20</option>
             <option value={50}>Tampilkan: 50</option>
-            <option value={100}>Tampilkan: 100</option>
           </select>
         </div>
       </div>
@@ -122,48 +129,58 @@ export default function MateriPage() {
       {currentItems.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {currentItems.map((materi) => (
-            <div key={materi.id} className="bg-white rounded-2xl shadow-sm border overflow-hidden hover:shadow-md transition">
-              <div className="aspect-video bg-black">
-                {/* DISESUAIKAN: materi.urlYoutube sesuai nama kolom di Prisma */}
-                <iframe className="w-full h-full" src={materi.urlYoutube} allowFullScreen></iframe>
+            <div key={materi.id} className="group bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="aspect-video bg-black relative overflow-hidden">
+                <iframe 
+                    className="w-full h-full border-0" 
+                    src={materi.urlYoutube} 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen
+                ></iframe>
               </div>
-              <div className="p-5">
-                <div className="flex justify-between items-center mb-3">
-                    <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded uppercase">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                    <span className="text-[10px] font-black text-blue-700 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider border border-blue-100">
                         {materi.kategori}
                     </span>
-                    <span className="text-[10px] text-gray-400 font-mono">ID: {materi.id}</span>
+                    <span className="text-[10px] text-gray-300 font-mono">#{materi.id}</span>
                 </div>
-                <h3 className="font-bold text-lg text-gray-800">{materi.judul}</h3>
-                <p className="text-sm text-gray-500 mt-2 line-clamp-2">{materi.deskripsi}</p>
+                <h3 className="font-bold text-xl text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
+                    {materi.judul}
+                </h3>
+                <p className="text-sm text-gray-500 mt-3 line-clamp-2 italic">
+                    {materi.deskripsi || "Tidak ada deskripsi materi."}
+                </p>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed">
-          <p className="text-gray-500">Materi tidak ditemukan 😅</p>
+        <div className="text-center py-32 bg-gray-50 rounded-[40px] border-2 border-dashed border-gray-200">
+          <span className="text-6xl mb-4 block">🔍</span>
+          <h2 className="text-xl font-bold text-gray-800">Materi tidak ditemukan</h2>
+          <p className="text-gray-400 mt-1">Coba cari dengan kata kunci lain atau ganti kategori.</p>
         </div>
       )}
 
-      {/* PAGINATION CONTROLS */}
+      {/* PAGINATION */}
       {totalPages > 1 && (
-        <div className="mt-12 flex flex-wrap justify-center items-center gap-2">
+        <div className="mt-16 flex flex-wrap justify-center items-center gap-3">
           <button 
             disabled={currentPage === 1}
             onClick={() => setCurrentPage(p => p - 1)}
-            className="px-4 py-2 border rounded-lg disabled:opacity-30 bg-white hover:bg-gray-50 transition"
+            className="px-6 py-3 border rounded-2xl disabled:opacity-20 bg-white hover:bg-blue-50 text-gray-700 font-bold transition-all shadow-sm"
           >
-            Prev
+            ← Prev
           </button>
           
-          <div className="flex gap-1 overflow-x-auto p-1">
+          <div className="flex gap-2">
             {[...Array(totalPages)].map((_, i) => (
               <button
                 key={i + 1}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`min-w-10 h-10 rounded-lg border transition ${
-                  currentPage === i + 1 ? "bg-blue-600 text-white" : "bg-white hover:bg-gray-50"
+                className={`w-12 h-12 rounded-2xl border font-bold transition-all shadow-sm ${
+                  currentPage === i + 1 ? "bg-blue-600 text-white border-blue-600 scale-110" : "bg-white text-gray-600 hover:border-blue-400"
                 }`}
               >
                 {i + 1}
@@ -174,9 +191,9 @@ export default function MateriPage() {
           <button 
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage(p => p + 1)}
-            className="px-4 py-2 border rounded-lg disabled:opacity-30 bg-white hover:bg-gray-50 transition"
+            className="px-6 py-3 border rounded-2xl disabled:opacity-20 bg-white hover:bg-blue-50 text-gray-700 font-bold transition-all shadow-sm"
           >
-            Next
+            Next →
           </button>
         </div>
       )}

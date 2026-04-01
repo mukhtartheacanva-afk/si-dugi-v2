@@ -24,11 +24,10 @@ export default async function AdminMateriPage({
   const limit = Number(params.limit) || 5;
   const skip = (page - 1) * limit;
 
-  // 1. Deteksi Database
   const isPostgres = process.env.DATABASE_URL?.includes("postgres");
   const searchMode = isPostgres ? { mode: "insensitive" as const } : {};
 
-  // 2. Ambil Daftar Kategori Unik (untuk isi Dropdown Filter)
+  // Ambil kategori unik untuk filter dan modal
   const categoriesRaw = await prisma.materi.findMany({
     select: { kategori: true },
     distinct: ["kategori"],
@@ -36,7 +35,6 @@ export default async function AdminMateriPage({
   });
   const allCategories = categoriesRaw.map((c) => c.kategori);
 
-  // 3. Query Data (Gabungan Search + Filter Kategori)
   const whereClause = {
     AND: [
       selectedCategory ? { kategori: selectedCategory } : {},
@@ -61,53 +59,44 @@ export default async function AdminMateriPage({
 
   const totalPages = Math.ceil(total / limit);
 
-  
   return (
-    
     <div className="p-8">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900">Manajemen Materi</h1>
           <p className="text-gray-500">Ditemukan <span className="font-bold text-blue-600">{total}</span> materi</p>
         </div>
-        
       </div>
       
-      {/* Search Bar & Filter Container */}
       <div className="bg-gray-40 p-5 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-wrap items-center justify-between gap-4">
-        <form className="flex gap-2 items-center"> {/* Hapus flex-1 di sini agar tidak memenuhi layar */}
+        <form className="flex gap-2 items-center"> 
           <input 
             name="q" 
             defaultValue={query}
             placeholder="Cari judul..." 
-            // Tentukan lebar manual, misal w-64 (16rem) atau w-80 (20rem)
             className="w-150 px-4 py-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
           />
-          
           <button type="submit" className="bg-gray-900 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-black transition">
             Cari
           </button>
-          
           {(query || selectedCategory) && (
             <Link href="/admin/materi" className="bg-gray-100 text-gray-600 px-4 py-2.5 rounded-xl font-medium hover:bg-gray-200 transition">
               Reset
             </Link>
           )}
           <FilterKategori categories={allCategories} />
-          
         </form>
+
         <div className="flex gap-3 items-center">
-          
           <ImportMateriExcel />
           <ExportMateriExcel query={query} category={selectedCategory} />
           <div className="h-8 w-px bg-gray-200 mx-0 hidden md:block"></div> 
           <ModalTambahMateri categories={allCategories} />
-          <div className="h-8 w-px bg-gray-200 mx-0 hidden md:block"></div> {/* Garis pembatas tipis */}
+          <div className="h-8 w-px bg-gray-200 mx-0 hidden md:block"></div> 
           <LimitControl currentLimit={limit} />
-          </div>
         </div>
+      </div>
       
-      {/* TABLE */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
         <table className="w-full text-left border-collapse">
           <thead className="bg-gray-50 border-b border-gray-200">
@@ -122,7 +111,7 @@ export default async function AdminMateriPage({
               <tr key={item.id} className="hover:bg-blue-50/30 transition">
                 <td className="px-6 py-4">
                   <div className="text-sm font-bold text-gray-900">{item.judul}</div>
-                  <VideoLink url={item.urlYoutube} /> {/* PAKAI INI */}
+                  <VideoLink url={item.urlYoutube} />
                 </td>
                 <td className="p-5">
                   <span className="px-3 py-1 bg-white border border-blue-200 text-blue-600 text-[10px] uppercase font-black rounded-lg shadow-sm">
@@ -130,7 +119,9 @@ export default async function AdminMateriPage({
                   </span>
                 </td>
                 <td className="p-5 flex justify-center gap-6">
-                  <ModalEditMateri materi={item} />
+                  {/* DATA KATEGORI DIKIRIM KE SINI */}
+                  <ModalEditMateri materi={item} categories={allCategories} />
+                  
                   <form action={async () => { "use server"; await hapusMateri(item.id); }}>
                     <button className="text-red-400 hover:text-red-600 font-bold transition">Hapus</button>
                   </form>
@@ -141,10 +132,7 @@ export default async function AdminMateriPage({
         </table>
       </div>
 
-      {/* PAGINATION */}
-      <PaginationControls 
-        currentPage={page} 
-        totalPages={totalPages}/>
+      <PaginationControls currentPage={page} totalPages={totalPages}/>
     </div>
   );
 }
