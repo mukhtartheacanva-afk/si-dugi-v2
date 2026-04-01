@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { updateProfilMandiri } from "@/app/profil/actions";
+import { updateProfilMandiri } from "@/app/(user)/profil/actions";
 import Link from "next/link";
 
 // Tambahkan targetUserId di destructured props

@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import * as XLSX from "xlsx";
-import { importSiswa } from "@/app/siswa/actions";
+import { importSiswa } from "@/app/(admin)/admin/siswa/actions";
 
 export default function ImportExcel() {
   const fileInputRef = useRef<HTMLInputElement>(null);

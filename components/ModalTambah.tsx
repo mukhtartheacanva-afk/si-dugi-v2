@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { tambahSiswa } from "@/app/siswa/actions";
+import { tambahSiswa } from "@/app/(admin)/admin/siswa/actions";
 
 export default function ModalTambah() {
   const [isOpen, setIsOpen] = useState(false);

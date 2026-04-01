@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { updateSiswa } from "@/app/siswa/actions";
+import { updateSiswa } from "@/app/(admin)/admin/siswa/actions";
 
 // UPDATE: Sesuaikan interface dengan kolom di tabel User
 interface SiswaData {

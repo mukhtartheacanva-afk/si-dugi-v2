@@ -1,5 +1,5 @@
 "use client";
-import { hapusSiswa } from "@/app/siswa/actions";
+import { hapusSiswa } from "@/app/(admin)/admin/siswa/actions";
 
 export default function TombolHapus({ id }: { id: number }) {
   const handleHapus = async () => {
